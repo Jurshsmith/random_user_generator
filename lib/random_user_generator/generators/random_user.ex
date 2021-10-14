@@ -1,4 +1,6 @@
 defmodule RandomUserGenerator.RandomUser do
+  alias RandomUserGenerator.Utils
+
   use GenServer
 
   def start_link(opts) do
@@ -9,8 +11,11 @@ defmodule RandomUserGenerator.RandomUser do
   def init(_opts) do
     {:ok,
      %{
-       max_number: 0,
+       max_number: generate_random_user_point(),
        timestamp: nil
      }}
   end
+
+  defp generate_random_user_point(), do: Utils.generate_random_number(100)
+  defp get_timestamp(), do: Utils.get_timestamp()
 end
