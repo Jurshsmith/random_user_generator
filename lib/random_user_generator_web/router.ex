@@ -17,7 +17,7 @@ defmodule RandomUserGeneratorWeb.Router do
   scope "/", RandomUserGeneratorWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", UsersController, :get_random_users
   end
 
   # Other scopes may use custom stacks.
