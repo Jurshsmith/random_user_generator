@@ -3,19 +3,15 @@ defmodule RandomUserGenerator.UsersSeeds do
   alias RandomUserGenerator.Users.User
 
   @seed_users_total 1_000_000
-  @chunk_rate 500
+  @chunk_rate 1_000
 
   def generate_seeds() do
     1..@seed_users_total
-    |> Stream.chunk_every(@chunk_rate)
-    |> Task.async_stream(fn chunk ->
-      Repo.insert_all(User,
-       chunk
-        |> Enum.map(
+    |> Enum.map(
           fn _ -> [points: 0]
         end)
-      )
-      end)
+    |> Stream.chunk_every(@chunk_rate)
+    |> Task.async_stream(fn chunk -> Repo.insert_all(User, chunk) end, max_concurrency: 10)
     |> Stream.run
   end
 end
