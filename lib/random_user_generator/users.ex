@@ -102,11 +102,29 @@ defmodule RandomUserGenerator.Users do
     User.changeset(user, attrs)
   end
 
+  @spec update_all_with_random_points(integer, integer) :: any
   def update_all_with_random_points(min, max) when is_integer(min + max) do
     from(user in User,
       where: user.id >= ^min and user.id <= ^max,
       update: [set: [points: fragment("floor(random() * (100 + 1))")]]
     )
     |> Repo.update_all([])
+  end
+
+  @spec get_users_based_on_points(integer(), integer() | none()) :: list(User)
+  def get_users_based_on_points(points, limit \\ 2) do
+    try do
+      from(user in User,
+        where: user.points > ^points,
+        select: {user.id, user.points},
+        limit: ^limit
+      )
+      |> Repo.all()
+      |> Enum.map(fn {id, user_points} -> %User{id: id, points: user_points} end)
+    rescue
+      e ->
+        IO.inspect(e)
+        []
+    end
   end
 end

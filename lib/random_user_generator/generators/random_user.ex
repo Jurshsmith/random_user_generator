@@ -1,9 +1,8 @@
 defmodule RandomUserGenerator.RandomUser do
-  alias RandomUserGenerator.Utils
+  @randomization_interval 5_000
 
   alias RandomUserGenerator.Users
-
-  @randomization_interval 60_000
+  alias RandomUserGenerator.Utils
 
   use GenServer
 
@@ -20,6 +19,15 @@ defmodule RandomUserGenerator.RandomUser do
        max_number: generate_random_user_point(),
        timestamp: nil
      }}
+  end
+
+  @impl true
+  def handle_call(:get_random_user, _from, state) do
+    {:reply,
+     %{
+       users: Users.get_users_based_on_points(0),
+       timestamp: state[:timestamp]
+     }, state |> Map.put(:timestamp, get_timestamp())}
   end
 
   @impl true
@@ -65,6 +73,6 @@ defmodule RandomUserGenerator.RandomUser do
   defp generate_random_user_point(), do: Utils.generate_random_number(100)
   defp get_timestamp(), do: Utils.get_timestamp()
 
-  defp schedule_randomization(interval \\ @randomization_interval),
-    do: Process.send_after(self(), :randomize, interval)
+  defp schedule_randomization(delay \\ @randomization_interval),
+    do: Process.send_after(self(), :randomize, delay)
 end
