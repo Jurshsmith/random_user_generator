@@ -1,10 +1,7 @@
 defmodule RandomUserGenerator.RandomUser do
   alias RandomUserGenerator.Utils
 
-  # TODO: move to another module
-  import Ecto.Query
-  alias RandomUserGenerator.Repo
-  alias RandomUserGenerator.Users.User
+  alias RandomUserGenerator.Users
 
   @randomization_interval 60_000
 
@@ -55,35 +52,12 @@ defmodule RandomUserGenerator.RandomUser do
       |> Stream.chunk_every(1_000)
       |> Task.async_stream(
         fn chunk ->
-          min = chunk |> Enum.at(0)
-          max = chunk |> Enum.at(-1)
-
-          from(user in User,
-            where: user.id >= ^min and user.id <= ^max,
-            update: [set: [points: fragment("floor(random() * (100 + 1))")]]
-          )
-          |> Repo.update_all([])
+          chunk
+          |> Enum.at(0)
+          |> Users.update_all_with_random_points(chunk |> Enum.at(-1))
         end,
         max_concurrency: 10
       )
-      |> Enum.reduce(fn _, _acc -> {:ok, true} end)
-    end)
-  end
-
-  def randomize_points_for_all_users_more_optimized do
-    Task.Supervisor.async_nolink(__MODULE__.TaskSupervisor, fn ->
-      1..4_000
-      |> Stream.chunk_every(1000)
-      |> Task.async_stream(fn chunk ->
-        min = chunk |> Enum.at(0)
-        max = chunk |> Enum.at(-1)
-
-        from(user in User,
-          where: user.id >= ^min and user.id <= ^max,
-          update: [set: [points: fragment("floor(random()*100)")]]
-        )
-        |> Repo.update_all([])
-      end)
       |> Enum.reduce(fn _, _acc -> {:ok, true} end)
     end)
   end

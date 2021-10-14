@@ -101,4 +101,12 @@ defmodule RandomUserGenerator.Users do
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
+
+  def update_all_with_random_points(min, max) when is_integer(min + max) do
+    from(user in User,
+      where: user.id >= ^min and user.id <= ^max,
+      update: [set: [points: fragment("floor(random() * (100 + 1))")]]
+    )
+    |> Repo.update_all([])
+  end
 end
