@@ -11,7 +11,7 @@ Base System Dependencies: `Erlang`, `Elixir`, `Docker`
 **To start your Phoenix server**
 
 - Install dependencies with `mix deps.get`
-- Create and migrate your database with `mix ecto.setup`
+- Create and migrate your database with `mix ecto.setup` or reset with `mix ecto.reset`
 - Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
