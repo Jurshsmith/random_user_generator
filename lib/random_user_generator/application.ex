@@ -11,7 +11,7 @@ defmodule RandomUserGenerator.Application do
       # Start random user generator genserver
       RandomUserGenerator.Generators.RandomUser,
       # Start random user generator task supervisor
-      {Task.Supervisor, name: RandomUserGenerator.RandomUser.TaskSupervisor},
+      {Task.Supervisor, name: RandomUserGenerator.Generators.RandomUser.TaskSupervisor},
       # Start the Ecto repository
       RandomUserGenerator.Repo,
       # Start the Telemetry supervisor
