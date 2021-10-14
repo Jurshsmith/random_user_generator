@@ -32,3 +32,6 @@ random_user_generator-*.tar
 npm-debug.log
 /assets/node_modules/
 
+.elixir_ls
+
+pg_data
