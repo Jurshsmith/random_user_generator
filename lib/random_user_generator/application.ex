@@ -8,6 +8,8 @@ defmodule RandomUserGenerator.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      # Start random user generator genserver
+      RandomUserGenerator.RandomUser,
       # Start the Ecto repository
       RandomUserGenerator.Repo,
       # Start the Telemetry supervisor
