@@ -1,5 +1,8 @@
-defmodule RandomUserGenerator.RandomUser do
-  @randomization_interval 5_000
+defmodule RandomUserGenerator.Generators.RandomUser do
+  @randomization_interval 60_000
+  @chunk_range 1..1_000_000
+  @chunk_rate 1_000
+  @max_connection_pool 10
 
   alias RandomUserGenerator.Users
   alias RandomUserGenerator.Utils
@@ -22,10 +25,10 @@ defmodule RandomUserGenerator.RandomUser do
   end
 
   @impl true
-  def handle_call(:get_random_user, _from, state) do
+  def handle_call(:get_random_users, _from, state) do
     {:reply,
      %{
-       users: Users.get_users_based_on_points(0),
+       users: Users.get_users_based_on_points(state[:max_number]),
        timestamp: state[:timestamp]
      }, state |> Map.put(:timestamp, get_timestamp())}
   end
@@ -54,20 +57,37 @@ defmodule RandomUserGenerator.RandomUser do
     {:noreply, state}
   end
 
+  @impl true
+  def handle_cast(:reset, _state) do
+    {:noreply,
+     %{
+       max_number: generate_random_user_point(),
+       timestamp: nil
+     }}
+  end
+
   def randomize_points_for_all_users do
     Task.Supervisor.async_nolink(__MODULE__.TaskSupervisor, fn ->
-      1..1_000_000
-      |> Stream.chunk_every(1_000)
+      @chunk_range
+      |> Stream.chunk_every(@chunk_rate)
       |> Task.async_stream(
         fn chunk ->
           chunk
           |> Enum.at(0)
           |> Users.update_all_with_random_points(chunk |> Enum.at(-1))
         end,
-        max_concurrency: 10
+        max_concurrency: @max_connection_pool
       )
       |> Enum.reduce(fn _, _acc -> {:ok, true} end)
     end)
+  end
+
+  def get_random_users() do
+    GenServer.call(__MODULE__, :get_random_users)
+  end
+
+  def reset_state() do
+    GenServer.cast(__MODULE__, :reset)
   end
 
   defp generate_random_user_point(), do: Utils.generate_random_number(100)
