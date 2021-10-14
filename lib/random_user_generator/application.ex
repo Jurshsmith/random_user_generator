@@ -9,7 +9,7 @@ defmodule RandomUserGenerator.Application do
   def start(_type, _args) do
     children = [
       # Start random user generator genserver
-      RandomUserGenerator.RandomUser,
+      RandomUserGenerator.Generators.RandomUser,
       # Start random user generator task supervisor
       {Task.Supervisor, name: RandomUserGenerator.RandomUser.TaskSupervisor},
       # Start the Ecto repository
@@ -26,7 +26,7 @@ defmodule RandomUserGenerator.Application do
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: RandomUserGenerator.Supervisor]
+    opts = [strategy: :one_for_all, name: RandomUserGenerator.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
