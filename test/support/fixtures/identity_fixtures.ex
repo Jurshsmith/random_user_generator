@@ -1,7 +1,7 @@
-defmodule RandomUserGenerator.IdentityFixtures do
+defmodule RandomUserGenerator.UsersFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `RandomUserGenerator.Identity` context.
+  entities via the `RandomUserGenerator.Users` context.
   """
 
   @doc """
@@ -13,7 +13,7 @@ defmodule RandomUserGenerator.IdentityFixtures do
       |> Enum.into(%{
         points: 42
       })
-      |> RandomUserGenerator.Identity.create_user()
+      |> RandomUserGenerator.Users.create_user()
 
     user
   end

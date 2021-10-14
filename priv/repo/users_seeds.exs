@@ -1,6 +1,6 @@
 defmodule RandomUserGenerator.UsersSeeds do
   alias RandomUserGenerator.Repo
-  alias RandomUserGenerator.Identity.User
+  alias RandomUserGenerator.Users.User
 
   @seed_users_total 1_000_000
   @chunk_rate 500
