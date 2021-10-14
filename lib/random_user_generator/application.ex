@@ -10,6 +10,8 @@ defmodule RandomUserGenerator.Application do
     children = [
       # Start random user generator genserver
       RandomUserGenerator.RandomUser,
+      # Start random user generator task supervisor
+      {Task.Supervisor, name: RandomUserGenerator.RandomUser.TaskSupervisor},
       # Start the Ecto repository
       RandomUserGenerator.Repo,
       # Start the Telemetry supervisor
