@@ -111,7 +111,7 @@ defmodule RandomUserGenerator.Users do
     |> Repo.update_all([])
   end
 
-  @spec get_users_based_on_points(integer(), integer() | none()) :: list(User)
+  @spec get_users_based_on_points(integer(), integer() | none()) :: list(any)
   def get_users_based_on_points(points, limit \\ 2) do
     try do
       from(user in User,
@@ -120,7 +120,7 @@ defmodule RandomUserGenerator.Users do
         limit: ^limit
       )
       |> Repo.all()
-      |> Enum.map(fn {id, user_points} -> %User{id: id, points: user_points} end)
+      |> Enum.map(fn {id, user_points} -> %{id: id, points: user_points} end)
     rescue
       e ->
         IO.inspect(e)
